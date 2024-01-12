@@ -32,7 +32,7 @@ def calculeaza_fitness(populatie):
     return fitness_populatie
 
 
-def selectie(populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU):
+def selectie_turneu(populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU):
     parinti = []
 
     # combina populatia si fitness-ul intr-o singura structura de date
@@ -72,7 +72,7 @@ def selectie_elitista(populatie, fitness_populatie, DIM_PARINTI):
     return eliti
 
 
-def recombinare(parinti):
+def recombinare_medie_aritmetica(parinti):
     copii = []
 
     for i in range(len(parinti)):
@@ -143,6 +143,28 @@ def gaseste_index_best(fitness_populatie):
     index_fitness_minim = fitness_populatie.index(fitness_minim)
     return index_fitness_minim
 
+def selectie(tip_selectie, populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU):
+    match tip_selectie:
+        case "turneu":
+            parinti = selectie_turneu(populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU)
+            return parinti
+        case "elitista":
+            parinti = selectie_elitista(populatie, fitness_populatie, DIM_PARINTI)
+            return parinti
+        case _:
+            exit(-1)
+
+
+def recombinare(tip_recombinare, parinti):
+    match tip_recombinare:
+        case "medie_aritmetica":
+            copii = recombinare_medie_aritmetica(parinti)
+            return copii
+        case "medie_ponderata":
+            copii = recombinare_medie_ponderata(parinti)
+            return copii
+        case _:
+            exit(-1)
 
 def main():
     # parametri
