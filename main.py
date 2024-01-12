@@ -98,6 +98,34 @@ def recombinare(parinti):
 
     return copii
 
+def recombinare_medie_ponderata(parinti):
+    copii = []
+
+    for i in range(len(parinti)):
+        index_parinte1 = randint(0, len(parinti) - 1)
+        index_parinte2 = randint(0, len(parinti) - 1)
+
+        parinte1 = parinti[index_parinte1]
+        parinte2 = parinti[index_parinte2]
+
+        # print(parinte1, parinte2)
+
+        x_parinte1 = parinte1[0]
+        y_parinte1 = parinte1[1]
+
+        x_parinte2 = parinte2[0]
+        y_parinte2 = parinte2[1]
+
+        procentaj_parinte1 = randint(1, 99)
+        procentaj_parinte2 = 100 - procentaj_parinte1
+
+        x_copil = (procentaj_parinte1 * x_parinte1 + procentaj_parinte2 * x_parinte2) / 100
+        y_copil = (procentaj_parinte1 * y_parinte1 + procentaj_parinte2 * y_parinte2) / 100
+
+        copil = [x_copil, y_copil]
+        copii.append(copil)
+
+    return copii
 
 def mutatie(copii, RATA_MUTATIE):
     for copil in copii:
