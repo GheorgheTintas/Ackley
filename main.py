@@ -58,6 +58,20 @@ def selectie(populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU):
     return parinti
 
 
+def selectie_elitista(populatie, fitness_populatie, DIM_PARINTI):
+    tuplu = zip(populatie, fitness_populatie)
+    populatie_cu_fitness = list(tuplu)
+
+    populatie_cu_fitness.sort(key=lambda element: element[1])
+    # ii luam pe primii cei mai buni
+    eliti_cu_fitness = populatie_cu_fitness[:DIM_PARINTI]
+
+    eliti = []
+    for elit_cu_fitness in eliti_cu_fitness:
+        eliti.append(elit_cu_fitness[0])
+    return eliti
+
+
 def recombinare(parinti):
     copii = []
 
