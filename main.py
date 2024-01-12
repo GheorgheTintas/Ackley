@@ -1,3 +1,4 @@
+import random
 from math import exp, sqrt, cos, pi, e
 from random import randint, uniform
 
@@ -37,8 +38,7 @@ def selectie_turneu(populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU):
 
     # combina populatia si fitness-ul intr-o singura structura de date
     tuplu = zip(populatie, fitness_populatie)
-    # populatie_cu_fitness[0] = (populatie[0], fitness_populatie[0])
-    # populatie_cu_fitness[0][1] = fitness_populatie[0]
+    # convertim cuplul la lista (nu putem aplica len pt tuplu)
     populatie_cu_fitness = list(tuplu)
 
     while len(parinti) != DIM_PARINTI:
@@ -98,6 +98,7 @@ def recombinare_medie_aritmetica(parinti):
 
     return copii
 
+
 def recombinare_medie_ponderata(parinti):
     copii = []
 
@@ -127,13 +128,15 @@ def recombinare_medie_ponderata(parinti):
 
     return copii
 
-def mutatie(copii, RATA_MUTATIE):
+
+# adauga o valoare din intervalul (-1, 1) la gena copilului
+def mutatie_uniform(copii, RATA_MUTATIE):
     for copil in copii:
         for i in range(len(copil)):
-            numar_random = randint(0, 99)
+            numar_random = randint(0, 99)  # se genereaza un nr random pt a afla daca se efectueaza mutatia
             if numar_random < RATA_MUTATIE:
                 cantitate_random = uniform(-1, 1)
-                copil[i] += cantitate_random
+                copil[i] += cantitate_random  # se modifica gena copilului
 
 
 def gaseste_index_best(fitness_populatie):
@@ -142,6 +145,7 @@ def gaseste_index_best(fitness_populatie):
     # cautam indexul elementului minim
     index_fitness_minim = fitness_populatie.index(fitness_minim)
     return index_fitness_minim
+
 
 def selectie(tip_selectie, populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU):
     match tip_selectie:
@@ -166,14 +170,15 @@ def recombinare(tip_recombinare, parinti):
         case _:
             exit(-1)
 
+
 def main():
     # parametri
-    DIM_POPULATIE = 50
-    MAX_GENERATII = 1000
-    MINIM, MAXIM = -50, 50  # capete domeniu functie Ackley
-    DIM_PARINTI = 25 # 0 < DIM_PARINTI <= DIM_POPULATIE
+    DIM_POPULATIE = 100
+    MAX_GENERATII = 200
+    MINIM, MAXIM = -100, 100  # capete domeniu functie Ackley
+    DIM_PARINTI = 25  # 0 < DIM_PARINTI <= DIM_POPULATIE
     DIM_TURNEU = 3
-    RATA_MUTATIE = 5
+    RATA_MUTATIE = 20
 
     populatie = initializeaza_populatie(DIM_POPULATIE, MINIM, MAXIM)
     fitness_populatie = calculeaza_fitness(populatie)
@@ -182,11 +187,17 @@ def main():
     index_best = gaseste_index_best(fitness_populatie)
     solutie_best = populatie[index_best]
     fitness_best = fitness_populatie[index_best]
+    best_generatie = 0
+    # generatie = []
 
-    for i in range(MAX_GENERATII):
-        parinti = selectie(populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU)
-        copii = recombinare(parinti)
-        mutatie(copii, RATA_MUTATIE)
+    for generatie_curenta in range(1, MAX_GENERATII):
+        tip_selectie = random.choice(["turneu", "elitista"])
+        tip_recombinare = random.choice(["medie_aritmetica", "medie_ponderata"])
+
+        parinti = selectie(tip_selectie, populatie, fitness_populatie, DIM_PARINTI, DIM_TURNEU)
+        copii = recombinare(tip_recombinare, parinti)
+
+        mutatie_uniform(copii, RATA_MUTATIE)
 
         # actualizam populatia
         populatie = copii
@@ -195,12 +206,15 @@ def main():
         # cautam cel mai bun in generatia curenta
         index_best = gaseste_index_best(populatie)
         fitness_best_generatie_curenta = fitness_populatie[index_best]
+        # generatie.append(fitness_populatie[index_best])
+
         # actualizam cel mai bun daca e mai bun decat cel mai bun ever
         if fitness_best_generatie_curenta < fitness_best:
+            best_generatie = generatie_curenta
             solutie_best_generatie_curenta = populatie[index_best]
             solutie_best = solutie_best_generatie_curenta
 
-    print("Cea mai buna solutie: ", solutie_best, ", fitness: ", fitness_best)
+    print("Cea mai buna solutie: ", solutie_best, ", fitness: ", fitness_best, "gasit in generatia: ", best_generatie)
 
 
 if __name__ == '__main__':
